@@ -4,7 +4,7 @@ orbs:
 executors:
   docker-publisher:
     environment:
-      IMAGE_NAME: thomaspal/building-server-test
+      IMAGE_NAME_SERVER: thomaspal/building-server-test
     docker:
       - image: cimg/base:stable
 jobs:
