@@ -12,11 +12,49 @@ jobs:
     executor: docker-publisher
     steps:
       - checkout
-      - setup_remote_docker
+     
+      - run:
+          name: Install Docker Compose
+          environment:
+            COMPOSE_VERSION: '1.29.2'
+          command: |
+            curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
+            chmod +x ~/docker-compose
+            sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
           name: Build Docker image
           command: |
             docker build -t $IMAGE_NAME_SERVER:latest ./
+      - setup_remote_docker
+      - run:
+          name: Build images of services declared in docker-compose.yml
+          command: docker-compose build
+      - run:
+        name: Start all services declared in docker-compose.yml
+        command: docker-compose up -d
+      
+      - run:
+          name: Start docker-compose and verify service(s)
+          command: |
+            # Setting the Docker Compose project name to "circleci-demo-docker" means
+            # the names of our services' containers would be prefixed with "circleci-demo-docker".
+            docker-compose --project circleci-demo-docker up -d
+
+            # In this example, we have a "contacts" service, and
+            # we are trying to check, via `dockerize`, if the service is ready. 
+            docker container run --network container:circleci-demo-docker_contacts_1 \
+              docker.io/jwilder/dockerize \
+              -wait http://localhost:8080/healthcheck \
+              -wait-retry-interval 2s \
+              -timeout 20s
+
+
+
+
+
+
+
+
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $IMAGE_NAME_SERVER
