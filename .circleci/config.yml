@@ -32,7 +32,7 @@ jobs:
       #     command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
       - run:
           name: Archive Docker image graphql-hasura
-          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
+          command: docker save -o image2.tar postgres12
       # -  run:
       #     name: Start docker-compose and verify service(s)
       #     command: 
