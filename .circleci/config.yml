@@ -39,7 +39,7 @@ jobs:
       
       - run:
           name: push docker 
-          command: docker-compose push $GRAPHQL_HASURA_IMAGE:latest
+          command: docker-compose push postgres:latest
       # -  run:
       #     name: Start docker-compose and verify service(s)
       #     command: 
