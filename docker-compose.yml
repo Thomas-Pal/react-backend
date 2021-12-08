@@ -1,14 +1,14 @@
 version: '3.6' 
 services:
   web:
-    build: .
-    command: node server.js
-    volumes:
-      - .:/usr/app/
-      - /usr/app/node_modules
-    ports:
-      - "8081:8081"
-    image: thomaspal/web:latest
+    # build: .
+    # command: node server.js
+    # volumes:
+    #   - .:/usr/app/
+    #   - /usr/app/node_modules
+    # ports:
+    #   - "8081:8081"
+    # image: thomaspal/web:latest
   postgres:
     image: postgres:12
     restart: always
