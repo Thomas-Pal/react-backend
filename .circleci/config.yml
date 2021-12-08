@@ -32,14 +32,14 @@ jobs:
           command: docker-compose build
       - run:
           name: Start all services declared in docker-compose.yml
-          command: docker-compose up -d -t $GRAPHQL_HASURA_IMAGE:latest ./
+          command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
       
       # -  run:
       #     name: Start docker-compose and verify service(s)
       #     command: 
       # #       # Setting the Docker Compose project name to "circleci-demo-docker" means
       # #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
-      #       docker-compose build 
+      #       docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
 
       #       # In this example, we have a "contacts" service, and
       #       # we are trying to check, via `dockerize`, if the service is ready. 
@@ -60,13 +60,14 @@ jobs:
           name: Archive Docker image
           command: docker save -o image.tar $NODE_API_SERVER
       - run:
-          name: Archive Docker image hasura
+          name: Archive Docker image postgres
           command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
       - persist_to_workspace:
           root: .
           paths:
             - ./image.tar
             - ./image2.tar
+           
 
 
   publish-latest:
