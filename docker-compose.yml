@@ -6,8 +6,8 @@ services:
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
-    ports:
-      - "8081:8081"
+    # ports:
+    #   - "8081:8081"
   postgres:
     image: postgres:12
     restart: always
@@ -17,8 +17,8 @@ services:
       POSTGRES_PASSWORD: postgrespassword
   graphql-engine:
     image: hasura/graphql-engine:v2.0.10
-    ports:
-    - "8080:8080"
+    # ports:
+    # - "8080:8080"
     depends_on:
     - "postgres"
     restart: always
