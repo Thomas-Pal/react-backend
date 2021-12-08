@@ -34,12 +34,12 @@ jobs:
           name: Start all services declared in docker-compose.yml
           command: docker-compose up -d
       
-      # - run:
+      -  run:
       #     name: Start docker-compose and verify service(s)
-      #     command: |
+          command: 
       #       # Setting the Docker Compose project name to "circleci-demo-docker" means
       #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
-      #       docker-compose --project circleci-demo-docker up -d
+            docker-compose --project $GRAPHQL_HASURA_IMAGE up -d
 
       #       # In this example, we have a "contacts" service, and
       #       # we are trying to check, via `dockerize`, if the service is ready. 
