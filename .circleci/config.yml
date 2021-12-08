@@ -23,7 +23,7 @@ jobs:
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
       - run:
-          name: Build Docker image
+          name: Build Docker image node
           command: |
             docker build -t $NODE_API_SERVER:latest ./
      
