@@ -22,18 +22,17 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Build Docker image node
-          command: |
-            docker build -t $NODE_API_SERVER:latest ./
+      
      
       - run:
           name: Build images of services declared in docker-compose.yml
-          command: docker-compose build
-      - run:
-          name: Start all services declared in docker-compose.yml
           command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
-      
+      # - run:
+      #     name: Start all services declared in docker-compose.yml
+      #     command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
+      - run:
+          name: Archive Docker image graphql-hasura
+          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
       # -  run:
       #     name: Start docker-compose and verify service(s)
       #     command: 
@@ -51,7 +50,10 @@ jobs:
 
 
 
-
+      - run:
+          name: Build Docker image node
+          command: |
+            docker build -t $NODE_API_SERVER:latest ./
 
 
 
@@ -59,9 +61,7 @@ jobs:
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $NODE_API_SERVER
-      - run:
-          name: Archive Docker image postgres
-          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
+      
       - persist_to_workspace:
           root: .
           paths:
