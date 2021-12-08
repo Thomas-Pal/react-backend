@@ -61,7 +61,7 @@ jobs:
           command: docker save -o image.tar $NODE_API_SERVER
       - run:
           name: Archive Docker image hasura
-          command: docker save -o image.tar $GRAPHQL_HASURA_IMAGE
+          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
       - persist_to_workspace:
           root: .
           paths:
