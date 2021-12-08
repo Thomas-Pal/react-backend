@@ -35,7 +35,7 @@ jobs:
       #     command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE_postgres12
       - run:
           name: push docker 
-          command: docker login -u "thomaspal" -p "F00tba!!0505" docker.io
+          command: echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
       
       - run:
           name: push docker 
