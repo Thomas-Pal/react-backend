@@ -4,7 +4,8 @@ orbs:
 executors:
   docker-publisher:
     environment:
-      IMAGE_NAME_SERVER: thomaspal/building-server-test
+      NODE_API_SERVER: thomaspal/node-server
+      GRAPHQL_HASURA_IMAGE: thomaspal/graphql-hasura
     docker:
       - image: cimg/base:stable
 jobs:
@@ -24,7 +25,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t $IMAGE_NAME_SERVER:latest ./
+            docker build -t $NODE_API_SERVER:latest ./
      
       - run:
           name: Build images of services declared in docker-compose.yml
@@ -57,11 +58,17 @@ jobs:
 
       - run:
           name: Archive Docker image
-          command: docker save -o image.tar $IMAGE_NAME_SERVER
+          command: docker save -o image.tar $NODE_API_SERVER
+      - run:
+          name: Archive Docker image hasura
+          command: docker save -o image.tar $GRAPHQL_HASURA_IMAGE
       - persist_to_workspace:
           root: .
           paths:
             - ./image.tar
+            - ./image2.tar
+
+
   publish-latest:
     executor: docker-publisher
     steps:
@@ -75,7 +82,15 @@ jobs:
           name: Publish Docker Image to Docker Hub
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-            docker push $IMAGE_NAME_SERVER:latest
+            docker push $NODE_API_SERVER:latest
+      - run:
+          name: Load archived Docker image hasura
+          command: docker load -i /tmp/workspace/image2.tar
+      - run:
+          name: Publish Docker Image to Docker Hub hasura
+          command: |
+            echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker push $GRAPHQL_HASURA_IMAGE:latest
 workflows:
   version: 2
   build-master:
