@@ -19,8 +19,8 @@ services:
     container_name: thomaspal/postgres:latest
   graphql-engine:
     image: hasura/graphql-engine:v2.0.10
-    # ports:
-    # - "8080:8080"
+    ports:
+    - "8080:8080"
     container_name: thomaspal/graphql:latest
     depends_on:
     - "postgres"
