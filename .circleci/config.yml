@@ -39,7 +39,7 @@ jobs:
           command: 
       #       # Setting the Docker Compose project name to "circleci-demo-docker" means
       #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
-            docker-compose build -p $GRAPHQL_HASURA_IMAGE
+            docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
 
       #       # In this example, we have a "contacts" service, and
       #       # we are trying to check, via `dockerize`, if the service is ready. 
