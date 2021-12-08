@@ -22,36 +22,38 @@ jobs:
             curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
             chmod +x ~/docker-compose
             sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      - run:
-          name: Build Docker image node
-          command: |
-            docker build -t $NODE_API_SERVER:latest ./
+      
      
       - run:
           name: Build images of services declared in docker-compose.yml
-          command: docker-compose build
+          command: docker-compose build -p $GRAPHQL_HASURA_IMAGE:latest
+      # - run:
+      #     name: Start all services declared in docker-compose.yml
+      #     command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
       - run:
-          name: Start all services declared in docker-compose.yml
-          command: docker-compose up -d
-      
-      -  run:
+          name: Archive Docker image graphql-hasura
+          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE_postgres12
+      # -  run:
       #     name: Start docker-compose and verify service(s)
-          command: 
-      #       # Setting the Docker Compose project name to "circleci-demo-docker" means
-      #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
-            docker-compose -p $GRAPHQL_HASURA_IMAGE up --build -d
+      #     command: 
+      # #       # Setting the Docker Compose project name to "circleci-demo-docker" means
+      # #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
+      #       docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
 
       #       # In this example, we have a "contacts" service, and
       #       # we are trying to check, via `dockerize`, if the service is ready. 
       #       docker container run --network container:circleci-demo-docker_contacts_1 \
       #         docker.io/jwilder/dockerize \
       #         -wait http://localhost:8080/healthcheck \
-      #         -wait-retry-interval 2s \
+      #         -wait-retry-interval 2s 
       #         -timeout 20s
 
 
 
-
+      - run:
+          name: Build Docker image node
+          command: |
+            docker build -t $NODE_API_SERVER:latest ./
 
 
 
@@ -59,14 +61,13 @@ jobs:
       - run:
           name: Archive Docker image
           command: docker save -o image.tar $NODE_API_SERVER
-      - run:
-          name: Archive Docker image hasura
-          command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE
+      
       - persist_to_workspace:
           root: .
           paths:
             - ./image.tar
             - ./image2.tar
+           
 
 
   publish-latest:
