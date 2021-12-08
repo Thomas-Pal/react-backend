@@ -6,8 +6,9 @@ services:
     volumes:
       - .:/usr/app/
       - /usr/app/node_modules
-    # ports:
-    #   - "8081:8081"
+    ports:
+      - "8081:8081"
+    image: thomaspal/web:latest
   postgres:
     image: postgres:12
     restart: always
@@ -15,10 +16,12 @@ services:
     - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgrespassword
+    container_name: thomaspal/postgres:latest
   graphql-engine:
     image: hasura/graphql-engine:v2.0.10
     # ports:
     # - "8080:8080"
+    container_name: thomaspal/graphql:latest
     depends_on:
     - "postgres"
     restart: always
