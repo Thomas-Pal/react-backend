@@ -10,7 +10,7 @@ services:
     #   - "8081:8081"
     # image: thomaspal/web:latest
   postgres:
-    image: postgres:12
+    image: thomaspal/postgres:12
     restart: always
     volumes:
     - db_data:/var/lib/postgresql/data
@@ -18,7 +18,7 @@ services:
       POSTGRES_PASSWORD: postgrespassword
     container_name: thomaspal/postgres:latest
   graphql-engine:
-    image: hasura/graphql-engine:v2.0.10
+    image: thomaspal/hasura/graphql-engine:v2.0.10
     ports:
     - "8080:8080"
     container_name: thomaspal/graphql:latest
