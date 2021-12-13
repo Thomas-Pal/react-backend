@@ -12,13 +12,13 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-//app.listen(3001);
-const hostname = '0.0.0.0';
-const port = 8081;
+app.listen(8081);
+// const hostname = '0.0.0.0';
+// const port = 8081;
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-});
+// app.listen(port, hostname, () => {
+//   console.log(`Server running at http://${hostname}:${port}/`);
+// });
 
 const insertClaim = async (req, res, next) => {
 
