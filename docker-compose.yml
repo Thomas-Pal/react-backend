@@ -10,7 +10,7 @@ services:
     #   - "8081:8081"
     # image: thomaspal/web:latest
   postgres:
-    image: thomaspal/postgres:12
+    image: postgres:12
     restart: always
     volumes:
     - db_data:/var/lib/postgresql/data
