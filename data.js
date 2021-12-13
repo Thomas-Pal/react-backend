@@ -2,7 +2,8 @@ import fetch from "node-fetch";
 
 //API DATA
 export const insert_hasura = {
-    url: "http://graphql-engine:8080/v1/graphql",
+    //url: "http://graphql-engine:8080/v1/graphql",
+    url: "http://localhost:8080/v1/graphql",
     headers:{
         "Content-Type": "application/json",
         'x-hasura-admin-secret': "admin"
