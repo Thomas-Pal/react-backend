@@ -1,69 +1,33 @@
 version: 2.1
+
+# Use Node orb provided by CircleCI
+# Orbs are reusable snippets of code that help automate repeated processes, speed up project setup, and make it easy to integrate with third-party tools.
+#This allows us to run npm tests on are code that we define in App.test.js.
+# Use CircleCI base node config, this allows NPM tests to be run in the pipeline
 orbs: 
   node: circleci/node@4.9.0
 executors:
+  #Define docker image name for publishing
   docker-publisher:
     environment:
       NODE_API_SERVER: thomaspal/node-server
-      # GRAPHQL_HASURA_IMAGE: thomaspal/graphql-hasura
     docker:
       - image: cimg/base:stable
 jobs:
-  build:
+  #This step builds the new docker image 
+  Build-Docker-Image:
     executor: docker-publisher
     steps:
       - checkout
       - setup_remote_docker
-      # - run:
-      #     name: Install Docker Compose
-      #     environment:
-      #       COMPOSE_VERSION: '1.29.2'
-      #     command: |
-      #       curl -L "https://github.com/docker/compose/releases/download/${COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o ~/docker-compose
-      #       chmod +x ~/docker-compose
-      #       sudo mv ~/docker-compose /usr/local/bin/docker-compose
-      
-     
-      # - run:
-      #     name: Build images of services declared in docker-compose.yml
-      #     command: docker-compose build
-      # - run:
-      #     name: Start all services declared in docker-compose.yml
-      #     command: docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
-      # - run:
-      #     name: Archive Docker image graphql-hasura
-      #     command: docker save -o image2.tar $GRAPHQL_HASURA_IMAGE_postgres12
       - run:
           name: connect docker 
           command: echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-      
-      # - run:
-      #     name: push docker 
-      #     command: docker-compose push postgres
-      # -  run:
-      #     name: Start docker-compose and verify service(s)
-      #     command: 
-      # #       # Setting the Docker Compose project name to "circleci-demo-docker" means
-      # #       # the names of our services' containers would be prefixed with "circleci-demo-docker".
-      #       docker-compose build -t $GRAPHQL_HASURA_IMAGE:latest ./
-
-      #       # In this example, we have a "contacts" service, and
-      #       # we are trying to check, via `dockerize`, if the service is ready. 
-      #       docker container run --network container:circleci-demo-docker_contacts_1 \
-      #         docker.io/jwilder/dockerize \
-      #         -wait http://localhost:8080/healthcheck \
-      #         -wait-retry-interval 2s 
-      #         -timeout 20s
-
-
-
+  
       - run:
           name: Build Docker image node
           command: |
             docker build -t $NODE_API_SERVER:latest ./
-
-
-
 
       - run:
           name: Archive Docker image
@@ -73,11 +37,8 @@ jobs:
           root: .
           paths:
             - ./image.tar
-            # - ./image2.tar
-           
-
-
-  publish-latest:
+  #This step publishes the docker image to Docker hub using so environment variable that are populate on CircleCI
+  Publish-Latest-Image:
     executor: docker-publisher
     steps:
       - attach_workspace:
@@ -91,23 +52,17 @@ jobs:
           command: |
             echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
             docker push $NODE_API_SERVER:latest
-      # - run:
-      #     name: Load archived Docker image hasura
-      #     command: docker load -i /tmp/workspace/image2.tar
-      # - run:
-      #     name: Publish Docker Image to Docker Hub hasura
-      #     command: |
-      #       echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-      #       docker push $GRAPHQL_HASURA_IMAGE:latest
+  
 workflows:
+  #Define the workflow, run all jobs starting with node-test
   version: 2
   build-master:
     jobs:
-      - build:
+      - Build-Docker-Image:
           filters:
             branches:
               only: master
-      - publish-latest:
+      - Publish-Latest-Image:
           requires:
             - build
           filters:

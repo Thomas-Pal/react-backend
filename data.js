@@ -1,15 +1,15 @@
 import fetch from "node-fetch";
 
-//API DATA
+//HASURA ENGINEN DATA
 export const insert_hasura = {
-    //url: "http://graphql-engine:8080/v1/graphql",
-    url: "http://localhost:8080/v1/graphql",
+    url: "http://graphql-engine:8080/v1/graphql",
     headers:{
         "Content-Type": "application/json",
         'x-hasura-admin-secret': "admin"
     }
 };
 
+//DARWIN API DATA
 export const get_darwin_data = {
   url_metrics: "https://hsp-prod.rockshore.net/api/v1/serviceMetrics",
   url_details:"https://hsp-prod.rockshore.net/api/v1/serviceDetails",
@@ -17,10 +17,7 @@ export const get_darwin_data = {
     headers:{
           "Content-Type": "application/json",
           'Host': "hsp-prod.rockshore.net",
-          'Access-Control-Allow-Origin' : '*',
-          'Access-Control-Allow-Methods':'GET,PUT,POST,DELETE,PATCH,OPTIONS',
-          "crossorigin":"true",
-          "Authorization":"Basic c2FsZWguemFycm91ZEBpYm0uY29tOkhlbGxvLTEyMw=="
+          "Authorization":"Basic dC5wYWxAaG90bWFpbC5jby51azpGMDB0YmEhITA1MDU="
       
     }
   }
@@ -60,19 +57,6 @@ mutation ($actual_ta: time, $customer_first_stop: String, $customer_last_stop: S
   }
 }`;
 
-export const CREATE_SALESFORCE_CASE = `
-  mutation ($name: String, $email: String, $ticket_number: String, $journey_from: String, $journey_to: String, $date_of_journey: String, $departure_time: String) {
-    createSingleCase(input: { name: $name, email: $email, ticketNumber: $ticket_number, from: $journey_from, to: $journey_to, date: $date_of_journey, departureTime: $departure_time }) {
-      success
-      id
-      errors {
-        message
-        errorCode
-      }
-    }
-  }
-`
-
 
 //FUNCTIONS
 export const insert_claim = async (variables) => {
@@ -85,12 +69,5 @@ export const insert_darwin_data = async (variables) => {
   const data = await fetchResponse.json();
   return data;
 };
-export const create_salesforce_case = async (variables) => {
-  const fetchResponse = await fetch(insert_hasura.url, { method: 'POST', body: JSON.stringify({ query: CREATE_SALESFORCE_CASE, variables }), headers: insert_hasura.headers });
-  const data = await fetchResponse.json();
-  console.log('d', data);
-  return data;
-}
 
 
-//module.exports = { insert_hasura, get_darwin_data, INSERT_CLAIM, INSERT_DARWIN_DATA, insert_claim, insert_darwin_data, create_salesforce_case };

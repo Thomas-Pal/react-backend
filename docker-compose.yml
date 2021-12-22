@@ -1,14 +1,16 @@
 version: '3.6' 
 services:
-  # web:
-    # build: .
-    # command: node server.js
-    # volumes:
-    #   - .:/usr/app/
-    #   - /usr/app/node_modules
-    # ports:
-    #   - "8081:8081"
-    # image: thomaspal/web:latest
+
+  #Build Validation Server from DockerFile
+  web:
+    build: .
+    command: node server.js
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - "8081:8081"
+  #Build postgres container for Hasura
   postgres:
     image: postgres:12
     restart: always
@@ -16,18 +18,17 @@ services:
     - db_data:/var/lib/postgresql/data
     environment:
       POSTGRES_PASSWORD: postgrespassword
-    
+  #Build Hasura-GraphQL engine image
   graphql-engine:
     image: hasura/graphql-engine:v2.0.10
     ports:
     - "8080:8080"
- 
+    #Relies on postgres
     depends_on:
     - "postgres"
     restart: always
     environment:
       ## postgres database to store Hasura metadata
-      ##test
       HASURA_GRAPHQL_METADATA_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
       ## this env var can be used to add the above postgres database to Hasura as a data source. this can be removed/updated based on your needs
       PG_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres

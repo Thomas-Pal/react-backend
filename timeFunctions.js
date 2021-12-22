@@ -1,3 +1,6 @@
+
+//Fucntion to covert times into format Hasura accepts
+
 export const convert_time = (time) => {
     let hours = time.substring(0,2);
     let minutes = time.substring(3,5);
